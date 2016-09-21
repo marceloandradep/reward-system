@@ -14,20 +14,25 @@
            (recur (if reward-graph reward-graph visited-graph)))))))
   ([graph node]
    (if (has-edges? node)
+     ;; node is not a leaf
      (reduce
        (fn [graph edge]
          ;; a walkable edge is an edge that we should walk recursively to calculate the rewards
          (if (:walkable edge)
            (if (:visited (get-node graph (:to edge)))
              ;; is a node is already visited just use the value already calculated
-             (merge-value-to-node graph (:id node) (concat [1] (get-value-from-node graph (:to edge))))
+             (let [to-value (get-value-from-node graph (:to edge))]
+               (if to-value
+                 (merge-value-to-node graph (:id node) (concat [1] to-value))
+                 graph))
 
              ;; is a node is not visited we have to calculate its subgraph
              (let [to-id (:to edge)
                    visited-graph (visit graph (get-node graph to-id))
                    to (get-node visited-graph to-id)
-                   subgraph (reward-graph visited-graph to)]
-               (if subgraph
+                   subgraph (reward-graph visited-graph to)
+                   to-value (get-value-from-node subgraph to-id)]
+               (if to-value
                  (merge-value-to-node subgraph (:id node) (concat [1] (get-value-from-node subgraph to-id)))
                  visited-graph)))
 
@@ -35,7 +40,7 @@
            graph)) graph (:edges node))
 
      ;; return nil to indicate that it is a leaf node
-     nil)))
+     (set-value-to-node graph (:id node) nil))))
 
 (defn calculate-points
   [coll]

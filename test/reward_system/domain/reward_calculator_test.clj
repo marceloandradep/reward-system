@@ -65,10 +65,10 @@
           reward-graph (reward-graph graph)
           reward (calculate-reward reward-graph)]
       (is (= '(
-                {:id "50" :score 4.5}
-                {:id "49" :score 3.25}
-                {:id "96" :score 1.0}
+                {:id "49" :score 1.5}
+                {:id "50" :score 1.0}
                 {:id "146" :score 0.0}
+                {:id "96" :score 0.0}
                 {:id "95" :score 0.0}
                 {:id "98" :score 0.0}
                 {:id "100" :score 0.0}
